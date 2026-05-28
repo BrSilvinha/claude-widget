@@ -36,6 +36,10 @@ function formatTimeUntil(isoDate) {
   return `${m}m`;
 }
 
+function formatExactTime(isoDate) {
+  return new Date(isoDate).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+}
+
 function formatResetDay(isoDate) {
   const d = new Date(isoDate);
   return d.toLocaleDateString('es-PE', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
@@ -64,6 +68,7 @@ async function getLimits() {
       pct: Math.round(session.utilization),
       resetsIn: formatTimeUntil(session.resets_at),
       resetsAt: session.resets_at,
+      resetsAtExact: formatExactTime(session.resets_at),
     } : null,
     weekly: weekly ? {
       pct: Math.round(weekly.utilization),

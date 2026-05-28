@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, screen, Notification } = require('electron');
 const path = require('path');
 const { getUsageStats } = require('./usage');
 const { getLimits } = require('./limits');
@@ -60,9 +60,23 @@ function createWindow() {
     return null;
   });
 
+  let lastSessionResetsAt = null;
+
   async function pushData() {
     if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('data-update', await buildPayload());
+      const payload = await buildPayload();
+      mainWindow.webContents.send('data-update', payload);
+
+      const currentResetsAt = payload.limits?.session?.resetsAt;
+      if (currentResetsAt && lastSessionResetsAt && lastSessionResetsAt !== currentResetsAt) {
+        const exactTime = payload.limits.session.resetsAtExact;
+        new Notification({
+          title: 'Claude Code — Sesión reiniciada',
+          body: `Tu límite de sesión se reinició. Próximo reinicio a las ${exactTime}.`,
+          icon: require('fs').existsSync(ICON_PATH) ? ICON_PATH : undefined,
+        }).show();
+      }
+      if (currentResetsAt) lastSessionResetsAt = currentResetsAt;
     }
   }
 

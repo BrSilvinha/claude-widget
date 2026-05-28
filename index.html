@@ -220,7 +220,8 @@
         document.getElementById('sess-fill'),
         limits.session.pct, false
       );
-      document.getElementById('sess-reset').textContent = 'Reinicia en ' + limits.session.resetsIn;
+      document.getElementById('sess-reset').textContent =
+        'a las ' + limits.session.resetsAtExact + '  ·  en ' + limits.session.resetsIn;
     }
 
     if (limits?.weekly) {
