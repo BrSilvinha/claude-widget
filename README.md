@@ -1,27 +1,25 @@
 # Claude Code Usage Widget
 
-A lightweight, always-on-top desktop widget for Windows that shows your **Claude Code** token usage and rate-limit status in real time — directly on your screen while you work.
+Widget de escritorio flotante para Windows que muestra tu uso de **Claude Code** en tiempo real — tokens consumidos y porcentaje de límites de sesión y semanales, directamente en tu pantalla mientras trabajas.
 
-![Widget Preview](https://raw.githubusercontent.com/BrSilvinha/claude-widget/main/preview.png)
+## Características
 
-## Features
+- **Límite de sesión** — ventana de uso de 5 horas actual (%)
+- **Límite semanal** — ventana de uso de 7 días (%)
+- **Contador de tokens** — tokens consumidos hoy y este mes
+- Tarjeta flotante transparente con efecto glassmorphism, siempre encima
+- Vive en la bandeja del sistema (mostrar/ocultar con un clic)
+- Se actualiza automáticamente cada 30 segundos
+- Animación suave de entrada (slide-up)
 
-- **Session limit** — current 5-hour usage window (%)
-- **Weekly limit** — rolling 7-day usage window (%)
-- **Token counter** — tokens consumed today and this month
-- Frameless, transparent glassmorphism card (always on top)
-- Lives in the system tray (show/hide with a click)
-- Auto-refreshes every 30 seconds
-- Animates in with a smooth slide-up transition
-
-## Requirements
+## Requisitos
 
 - **Windows 10/11**
-- [Node.js](https://nodejs.org) v18 or later
-- [Claude Code CLI](https://claude.ai/code) installed and logged in
-  - The widget reads `~/.claude/.credentials.json` and `~/.claude/projects/**/*.jsonl`
+- [Node.js](https://nodejs.org) v18 o superior
+- [Claude Code CLI](https://claude.ai/code) instalado y con sesión activa
+  - El widget lee `~/.claude/.credentials.json` y `~/.claude/projects/**/*.jsonl`
 
-## Installation
+## Instalación
 
 ```bash
 git clone https://github.com/BrSilvinha/claude-widget.git
@@ -30,42 +28,47 @@ npm install
 npm start
 ```
 
-The widget will appear in the bottom-right corner of your primary display. An icon will also be added to your system tray.
+El widget aparecerá en la esquina inferior derecha de tu pantalla principal. También se añadirá un ícono a la bandeja del sistema.
 
-## How It Works
+### Ejecutar sin ventana de consola (recomendado)
 
-| Source | Data |
+Haz doble clic en `launch.vbs` para iniciar el widget sin que aparezca una ventana de terminal.
+
+## Cómo funciona
+
+| Fuente | Datos |
 |---|---|
-| `~/.claude/projects/**/*.jsonl` | Token counts (today / month) |
-| `https://claude.ai/api/oauth/usage` | Session & weekly limit percentages |
+| `~/.claude/projects/**/*.jsonl` | Conteo de tokens (hoy / mes) |
+| `https://claude.ai/api/oauth/usage` | Porcentaje de límites de sesión y semanal |
 
-- **Token stats** are parsed locally — no network call needed.
-- **Limit data** is fetched from Claude's API using the OAuth token stored by Claude Code at `~/.claude/.credentials.json`. No credentials are ever stored or transmitted elsewhere.
+- Los **tokens** se calculan localmente leyendo los logs de Claude Code — no requiere red.
+- Los **límites** se obtienen de la API de Claude usando el token OAuth que guarda Claude Code en `~/.claude/.credentials.json`. Las credenciales nunca se almacenan ni transmiten a ningún otro lugar.
 
-## Project Structure
+## Estructura del proyecto
 
 ```
 claude-widget/
-├── main.js          # Electron main process — window + tray setup
-├── preload.js       # Secure IPC bridge (contextBridge)
-├── index.html       # Widget UI (vanilla HTML/CSS/JS)
-├── usage.js         # Reads .jsonl logs and aggregates token counts
-├── limits.js        # Fetches live limit data from Claude's API
-└── fetch-icon.js    # Downloads Claude's icon for the tray on first run
+├── main.js          # Proceso principal de Electron — ventana y bandeja
+├── preload.js       # Puente IPC seguro (contextBridge)
+├── index.html       # UI del widget (HTML/CSS/JS vanilla)
+├── usage.js         # Lee los .jsonl y acumula conteos de tokens
+├── limits.js        # Obtiene los límites en vivo desde la API de Claude
+├── fetch-icon.js    # Descarga el ícono de Claude para la bandeja al primer inicio
+└── launch.vbs       # Lanzador sin ventana de consola para Windows
 ```
 
-## Tray Menu
+## Menú de la bandeja
 
-Right-click the tray icon to:
-- **Show / Hide** the widget
-- **Exit** the app
+Clic derecho en el ícono de la bandeja para:
+- **Mostrar / Ocultar** el widget
+- **Salir** de la app
 
-## Notes
+## Notas
 
-- The widget uses Claude Code's existing OAuth session — no API key is required.
-- Token counts include `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens`.
-- If `~/.claude/.credentials.json` is not found, limit bars will show as empty (token counts still work).
+- El widget usa la sesión OAuth existente de Claude Code — no requiere API key propia.
+- El conteo de tokens incluye `input_tokens`, `cache_creation_input_tokens` y `cache_read_input_tokens`.
+- Si `~/.claude/.credentials.json` no existe, las barras de límite aparecerán vacías (el conteo de tokens sigue funcionando).
 
-## License
+## Licencia
 
 MIT
