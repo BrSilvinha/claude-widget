@@ -1,0 +1,12 @@
+{
+  "name": "claude-widget",
+  "version": "1.0.0",
+  "description": "Widget overlay para monitorear uso de Claude Code",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^33.0.0"
+  }
+}
