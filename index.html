@@ -12,6 +12,8 @@
       width: 320px;
     }
 
+    body.compact { height: 130px; }
+
     body {
       display: flex;
       align-items: flex-end;
@@ -70,6 +72,14 @@
     }
     .win-btn.minimize:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
     .win-btn.close:hover    { background: rgba(255,80,80,0.25); color: #ff8080; }
+    .win-btn.compact:hover  { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
+
+    /* Compact mode: hide non-essential sections */
+    body.compact #week-block,
+    body.compact .sep,
+    body.compact .tokens,
+    body.compact .footer { display: none; }
+    body.compact .block { margin-bottom: 0; }
 
     /* ── Limit block ── */
     .block { margin-bottom: 12px; }
@@ -145,6 +155,7 @@
       <span class="brand-plan">Pro</span>
     </div>
     <div style="display:flex;gap:5px;-webkit-app-region:no-drag">
+      <div class="win-btn compact" id="compact-btn" onclick="toggleCompact()" title="Modo compacto">⊟</div>
       <div class="win-btn minimize" onclick="window.claude.minimize()" title="Minimizar">─</div>
       <div class="win-btn close"    onclick="window.claude.close()"    title="Cerrar">✕</div>
     </div>
@@ -164,7 +175,7 @@
   </div>
 
   <!-- Semanal -->
-  <div class="block" style="margin-bottom:0">
+  <div class="block" id="week-block" style="margin-bottom:0">
     <div class="block-header">
       <span class="block-label">Esta semana</span>
       <div class="block-right">
@@ -243,6 +254,14 @@
     const now = new Date();
     document.getElementById('footer').textContent =
       'act. ' + now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  let isCompact = false;
+  function toggleCompact() {
+    isCompact = !isCompact;
+    document.body.classList.toggle('compact', isCompact);
+    document.getElementById('compact-btn').textContent = isCompact ? '⊞' : '⊟';
+    window.claude.setCompact(isCompact);
   }
 
   window.claude.getData().then(render);

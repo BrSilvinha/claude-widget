@@ -48,6 +48,12 @@ function createWindow() {
 
   ipcMain.on('close-widget', () => app.quit());
   ipcMain.on('minimize-widget', () => mainWindow.hide());
+  ipcMain.on('set-compact', (_, compact) => {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const newH = compact ? 130 : H;
+    mainWindow.setSize(W, newH);
+    mainWindow.setPosition(width - W - 12, height - newH - 12);
+  });
   ipcMain.handle('get-data', () => buildPayload());
 
   // Enviar ruta del icono al renderer para usarlo en el header
